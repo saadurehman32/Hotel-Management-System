@@ -1,0 +1,132 @@
+﻿@page "/room-list"
+@inject RoomBookingService RoomBookingService
+
+<PageTitle>Room List</PageTitle>
+
+<h3>Room List</h3>
+
+@if (RoomBookingService.Rooms.Any())
+{
+    <!-- Table for displaying room list -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Room Type</th>
+                <th>Floor</th>
+                <th>Capacity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in RoomBookingService.Rooms)
+            {
+                <tr>
+                    <td>@room.RoomNumber</td>
+                    <td>@room.Type</td>
+                    <td>@room.Floor</td>
+                    <td>@room.Capacity</td>
+                    <td>
+                        <!-- Edit and Delete buttons for each room -->
+                        <button class="btn btn-warning btn-sm" @onclick="() => StartEditRoom(room)">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm ms-2" @onclick="() => ConfirmDeleteRoom(room.RoomNumber)">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No rooms added yet.</p>
+}
+
+<hr />
+
+@if (isEditing)
+{
+    <h3>Edit Room</h3>
+
+    <EditForm Model="editedRoom" OnValidSubmit="SaveEditedRoom">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="roomNumber" class="form-label">Room Number <span class="text-danger">*</span></label>
+            <InputNumber id="roomNumber" class="form-control" @bind-Value="editedRoom.RoomNumber" disabled />
+            <ValidationMessage For="@(() => editedRoom.RoomNumber)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="type" class="form-label">Room Type <span class="text-danger">*</span></label>
+            <InputText id="type" class="form-control" @bind-Value="editedRoom.Type" />
+            <ValidationMessage For="@(() => editedRoom.Type)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="floor" class="form-label">Floor <span class="text-danger">*</span></label>
+            <InputNumber id="floor" class="form-control" @bind-Value="editedRoom.Floor" />
+            <ValidationMessage For="@(() => editedRoom.Floor)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="capacity" class="form-label">Capacity <span class="text-danger">*</span></label>
+            <InputNumber id="capacity" class="form-control" @bind-Value="editedRoom.Capacity" />
+            <ValidationMessage For="@(() => editedRoom.Capacity)" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="CancelEdit">Cancel</button>
+    </EditForm>
+}
+
+@if (!string.IsNullOrEmpty(feedbackMessage))
+{
+    <div class="mt-3 alert alert-info">
+        @feedbackMessage
+    </div>
+}
+
+@code {
+    private ModelRoom editedRoom = new ModelRoom();
+    private string feedbackMessage;
+    private bool isEditing = false;
+
+    // Start editing a room
+    private void StartEditRoom(ModelRoom room)
+    {
+        isEditing = true;
+        editedRoom = new ModelRoom
+            {
+                RoomNumber = room.RoomNumber,
+                Type = room.Type,
+                Floor = room.Floor,
+                Capacity = room.Capacity
+            };
+    }
+
+    private async Task SaveEditedRoom()
+    {
+        feedbackMessage = await RoomBookingService.EditRoomAsync(editedRoom);
+        isEditing = false;
+    }
+
+
+    // Confirm and delete a room
+    private async Task ConfirmDeleteRoom(int roomNumber)
+    {
+        feedbackMessage = await RoomBookingService.DeleteRoomAsync(roomNumber);
+    }
+
+    // Cancel editing a room
+    private void CancelEdit()
+    {
+        isEditing = false;
+        editedRoom = new ModelRoom();
+        feedbackMessage = string.Empty;
+    }
+}

@@ -1,0 +1,88 @@
+﻿@page "/"
+@inject NavigationManager nm
+
+<!-- Navbar -->
+<div class="fixed-top">
+   
+</div>
+
+<!-- Main Container -->
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 60vh; padding-top:3rem ">
+    <div class="card shadow-lg p-5 rounded-lg" style="max-width: 35rem; width: 100%;">
+
+        <form @onsubmit="HandleLogin">
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label fw-bold">Email</label>
+                <input id="email" class="form-control" type="email" placeholder="Enter your email" @bind="loginModel.Email" />
+            </div>
+            <!-- Password -->
+            <div class="mb-3">
+                <label for="password" class="form-label fw-bold">Password</label>
+                <input id="password" class="form-control" type="password" placeholder="Enter your password" @bind="loginModel.Password" />
+            </div>
+            <!-- Remember Me and Forgot Password -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-check">
+                    <input id="rememberMe" type="checkbox" class="form-check-input" @bind="loginModel.RememberMe" />
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                <a href="/Identity/Account/ForgotPassword" class="text-decoration-none text-primary">Forgot password?</a>
+            </div>
+            <!-- Log In Button -->
+            <button type="submit" class="btn btn-primary w-100">Log In</button>
+        </form>
+
+        <!-- Error Message -->
+        <div class="text-center mt-3 text-danger">
+            @ErrorMessage
+        </div>
+        <hr class="my-4">
+        <!-- Registration Section -->
+        <p class="text-center text-muted">Don't have an account?</p>
+        <button @onclick="NavigateToRegister" class="btn btn-outline-success w-100">Register</button>
+    </div>
+</div>
+
+<!-- Footer -->
+
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string? ErrorMessage;
+
+    private async Task HandleLogin()
+    {
+        // Basic validation: Check if the email and password fields are filled
+        if (string.IsNullOrWhiteSpace(loginModel.Email) || string.IsNullOrWhiteSpace(loginModel.Password))
+        {
+            ErrorMessage = "Email and Password cannot be empty.";
+            return;
+        }
+        await Task.Delay(0);
+        // Placeholder user validation logic (for demo purposes)
+        if (loginModel.Email == "saad@gmail.com" && loginModel.Password == "Saad@1234")
+        {
+            // Navigate to the dashboard on successful login
+            nm.NavigateTo("/dashboard");
+        }
+       
+        else
+        {
+            ErrorMessage = "Invalid email or password. Please try again.";
+        }
+    }
+
+    // Method to navigate to the Register page
+    private void NavigateToRegister()
+    {
+        nm.NavigateTo("/Identity/Account/Register");
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public bool RememberMe { get; set; }
+    }
+}

@@ -1,0 +1,58 @@
+﻿@inherits LayoutComponentBase
+
+<div class="sidebar bg-light d-flex flex-column vh-100 shadow-sm" style="font-size:1.2rem ; ">
+    <div class="sidebar-header text-center py-3 border-bottom">
+        <img src="images/logo.png" alt="Logo" class="img-fluid" style="height: 100px; width: 350px" />
+    </div>
+    <ul class="nav flex-column mt-3">
+        <li class="nav-item mt-2">
+            <NavLink class="nav-link d-flex align-items-center text-white py-3 px-3" href="/dashboard" Match="NavLinkMatch.All">
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </NavLink>
+        </li>
+        <li class="nav-item mt-2">
+            <NavLink class="nav-link d-flex align-items-center text-Dark py-3 px-3" href="/roomselectionform">
+                <i class="fas fa-calendar-plus me-2"></i> Room Selection 
+            </NavLink>
+        </li>
+        <li class="nav-item mt-2">
+            <NavLink class="nav-link d-flex align-items-center text-Dark py-3 px-3" href="/room-list">
+                <i class="fas fa-calendar-check me-2"></i> Room List
+            </NavLink>
+        </li>
+        <li class="nav-item mt-2">
+            <NavLink class="nav-link d-flex align-items-center text-Dark py-3 px-3" href="/booking-time-form">
+                <i class="fas fa-calendar-check me-2"></i> Booking form
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+<div class="content p-4">
+    @Body
+</div>
+
+<!-- Additional Styles -->
+<style>
+    /* Hover and Active State for Nav Links */
+    .nav-link:hover, .nav-link.active {
+        background-color: cornflowerblue;
+        color: #ffffff !important;
+        border-radius: 10px; /* Matches the li border-radius */
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        overflow-y: auto;
+        z-index: 1029;
+    }
+
+    /* Content Area */
+    .content {
+        margin-left: 260px;
+    }
+</style>

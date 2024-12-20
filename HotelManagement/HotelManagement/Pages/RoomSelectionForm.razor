@@ -1,0 +1,108 @@
+﻿@page "/roomselectionform"
+@using System.Text.Json
+@inject RoomBookingService RoomBookingService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Add Room</PageTitle>
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 rounded">
+        <h3 class="card-title text-center mb-4">Add New Room</h3>
+
+        <!-- Add Room Button -->
+        <button class="btn btn-secondary mb-3" @onclick="QuickAddRoom">Quick Add Room</button>
+
+        <EditForm Model="newRoom" OnValidSubmit="SubmitForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Room Number -->
+            <div class="mb-3">
+                <label for="roomNumber" class="form-label">Room Number <span class="text-danger">*</span></label>
+                <InputNumber id="roomNumber" class="form-control" @bind-Value="newRoom.RoomNumber" />
+                <ValidationMessage For="@(() => newRoom.RoomNumber)" />
+            </div>
+
+            <!-- Room Type -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Room Type <span class="text-danger">*</span></label>
+                <InputText id="type" class="form-control" @bind-Value="newRoom.Type" />
+                <ValidationMessage For="@(() => newRoom.Type)" />
+            </div>
+
+            <!-- Floor -->
+            <div class="mb-3">
+                <label for="floor" class="form-label">Floor <span class="text-danger">*</span></label>
+                <InputNumber id="floor" class="form-control" @bind-Value="newRoom.Floor" />
+                <ValidationMessage For="@(() => newRoom.Floor)" />
+            </div>
+
+            <!-- Capacity -->
+            <div class="mb-3">
+                <label for="capacity" class="form-label">Capacity <span class="text-danger">*</span></label>
+                <InputNumber id="capacity" class="form-control" @bind-Value="newRoom.Capacity" />
+                <ValidationMessage For="@(() => newRoom.Capacity)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Add Room</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(feedbackMessage))
+        {
+            <div class="mt-3 alert alert-info">
+                @feedbackMessage
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private ModelRoom newRoom = new ModelRoom();
+    private string feedbackMessage = string.Empty;
+    private List<ModelRoom> rooms = new List<ModelRoom>();
+    private bool isLoaded = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadRoomsFromLocalStorageAsync();
+            StateHasChanged(); // Force a re-render after data is loaded
+        }
+    }
+
+    private async Task QuickAddRoom()
+    {
+        newRoom = new ModelRoom
+            {
+                RoomNumber = 101,
+                Type = "Standard",
+                Floor = 1,
+                Capacity = 2
+            };
+        feedbackMessage = await RoomBookingService.AddRoomAsync(newRoom);
+    }
+
+    private async Task SubmitForm()
+    {
+        feedbackMessage = await RoomBookingService.AddRoomAsync(newRoom);
+        newRoom = new ModelRoom(); // Reset the form
+    }
+
+    private async Task LoadRoomsFromLocalStorageAsync()
+    {
+        try
+        {
+            var json = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "rooms");
+            if (!string.IsNullOrEmpty(json))
+            {
+                rooms = JsonSerializer.Deserialize<List<ModelRoom>>(json) ?? new List<ModelRoom>();
+            }
+            isLoaded = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading rooms: {ex.Message}");
+        }
+    }
+}

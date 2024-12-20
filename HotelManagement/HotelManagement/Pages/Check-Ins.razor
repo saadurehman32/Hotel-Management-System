@@ -1,0 +1,59 @@
+﻿@page "/booking-time-form"
+
+<h3>Booking Time Form</h3>
+
+<div class="form-group">
+    <label for="checkInDate">Check IN</label>
+    <div class="d-flex">
+        <input id="checkInDate" type="date" class="form-control me-2" @bind="CheckInDate" />
+        <select class="form-select me-2" @bind="CheckInHour">
+            @for (int i = 0; i < 24; i++)
+            {
+                <option value="@i">@i.ToString("D2")</option>
+            }
+        </select>
+        <input type="number" class="form-control" @bind="CheckInMinute" min="0" max="59" />
+    </div>
+</div>
+
+<div class="form-group mt-3">
+    <label for="checkOutDate">Check Out</label>
+    <div class="d-flex">
+        <input id="checkOutDate" type="date" class="form-control me-2" @bind="CheckOutDate" />
+        <select class="form-select me-2" @bind="CheckOutHour">
+            @for (int i = 0; i < 24; i++)
+            {
+                <option value="@i">@i.ToString("D2")</option>
+            }
+        </select>
+        <input type="number" class="form-control" @bind="CheckOutMinute" min="0" max="59" />
+    </div>
+</div>
+
+<div class="mt-4">
+    <button class="btn btn-primary me-2" @onclick="ContinueBooking">Continue</button>
+    <button class="btn btn-warning" @onclick="ChangeRooms">Change Rooms</button>
+</div>
+
+@code {
+    private DateTime CheckInDate { get; set; } = DateTime.Today;
+    private int CheckInHour { get; set; } = 0;
+    private int CheckInMinute { get; set; } = 0;
+
+    private DateTime CheckOutDate { get; set; } = DateTime.Today.AddDays(1);
+    private int CheckOutHour { get; set; } = 12;
+    private int CheckOutMinute { get; set; } = 0;
+
+    private void ContinueBooking()
+    {
+        // Logic to continue booking
+        Console.WriteLine($"Check-In: {CheckInDate} {CheckInHour}:{CheckInMinute}");
+        Console.WriteLine($"Check-Out: {CheckOutDate} {CheckOutHour}:{CheckOutMinute}");
+    }
+
+    private void ChangeRooms()
+    {
+        // Logic to change rooms
+        Console.WriteLine("Rooms Changed!");
+    }
+}

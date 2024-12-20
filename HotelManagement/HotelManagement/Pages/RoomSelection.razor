@@ -1,0 +1,44 @@
+﻿@page "/room-selection"
+@inject RoomBookingService RoomBookingService
+
+<div class="container mt-5">
+    <h3>Select a Room</h3>
+
+    @if (!isLoaded)
+    {
+        <p>Loading rooms...</p>
+    }
+    else
+    {
+        <div class="mb-3">
+            <label for="roomSelect" class="form-label">Choose Room</label>
+            <InputSelect id="roomSelect" class="form-select" @bind-Value="selectedRoomNumber">
+                <option value="">Select a Room</option>
+                @foreach (var room in RoomBookingService.Rooms)
+                {
+                    <option value="@room.RoomNumber">@room.RoomNumber</option>
+                }
+            </InputSelect>
+        </div>
+
+        @if (!string.IsNullOrEmpty(selectedRoomNumber))
+        {
+            <p class="text-success">You selected room number: @selectedRoomNumber</p>
+        }
+    }
+</div>
+
+@code {
+    private bool isLoaded = false;
+    private string selectedRoomNumber;
+
+    // Simulate loading of room data
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate a delay for loading rooms (e.g., fetching from an API or database)
+        await Task.Delay(2000); // Simulated delay of 2 seconds
+
+        // After loading, set isLoaded to true
+        isLoaded = true;
+    }
+}
